@@ -32,9 +32,20 @@
     .replace(/\s+-\s*AutoScout24.*$/i, '')
     .replace(/\s+\S+\s*(?:€|EUR)\s*[\d.,\s]+$/i, '')
     .replace(/\s+in\s+.+?\s+für\s+.*$/i, '')
+    .replace(/\s+(?:in|at|bei)\s+[\p{Letter}\p{Number}][\p{Letter}\p{Number}\s.'-]*$/iu, '')
     .trim();
   const titleName = listingNameFromTitle(document.title);
   const productName = titleName || structured.name || document.querySelector('h1')?.textContent?.trim();
+  const descriptiveName = (value, make) => {
+    const name = String(value || '').replace(/\s+/g, ' ').trim();
+    const lines = String(document.body?.innerText || '').split(/\r?\n/).map((line) => line.replace(/\s+/g, ' ').trim()).filter(Boolean);
+    const index = lines.findIndex((line) => line === name || line.startsWith(`${name} `));
+    const detail = index >= 0 ? lines[index + 1] : '';
+    const startsWithMake = !make || name.toLowerCase().startsWith(String(make).toLowerCase());
+    return startsWithMake && detail && detail.length <= 140 && !/(?:€|\bEUR\b|\bkm\b|\bmonth\b|\bphone\b)/i.test(detail)
+      ? `${name} ${detail}`.replace(/\s+/g, ' ').trim()
+      : name;
+  };
 
   const find = (patterns) => {
     for (const pattern of patterns) {
@@ -69,9 +80,10 @@
   };
 
   function extractVehicle() {
-    const name = String(productName || '').replace(/\s+/g, ' ').trim();
-    const words = name.split(' ');
+    const initialName = String(productName || '').replace(/\s+/g, ' ').trim();
+    const words = initialName.split(' ');
     const detectedMake = brand || words[0];
+    const name = descriptiveName(initialName, detectedMake);
     const modelFromName = (value) => {
       const source = String(value || '').replace(/\s+/g, ' ').trim();
       if (!source) return '';

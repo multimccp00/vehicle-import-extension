@@ -43,3 +43,16 @@ test('prefers the model-rich AutoScout title over an incomplete structured name'
   assert.equal(vehicle.engineCc, 1984);
   assert.equal(vehicle.firstRegistrationYear, 2016);
 });
+
+
+test('uses the adjacent descriptive listing line instead of a generic location title', () => {
+  const vehicle = parsePageSnapshot({
+    title: 'Volkswagen Golf in Senftenberg | mobile.de',
+    text: 'Volkswagen Golf\nR 2.0 TSI 4Motion Bi-Xenon Navi PDC\n22.990 EUR\nHubraum\n1.984 cm³\nKraftstoffart\nBenzin\nErstzulassung\n06/2016',
+    url: 'https://suchen.mobile.de/fahrzeuge/details.html?id=example',
+    hostname: 'suchen.mobile.de',
+    jsonLd: [{ '@type': 'Vehicle', brand: { name: 'Volkswagen' }, name: 'Volkswagen Golf' }]
+  });
+  assert.equal(vehicle.make, 'Volkswagen');
+  assert.equal(vehicle.model, 'Golf R 2.0 TSI 4Motion Bi-Xenon Navi PDC');
+});

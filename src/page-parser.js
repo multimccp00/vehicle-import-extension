@@ -31,7 +31,18 @@ function listingNameFromTitle(value) {
     .replace(/\s+-\s*AutoScout24.*$/i, '')
     .replace(/\s+\S+\s*(?:€|EUR)\s*[\d.,\s]+$/i, '')
     .replace(/\s+in\s+.+?\s+für\s+.*$/i, '')
+    .replace(/\s+(?:in|at|bei)\s+[\p{Letter}\p{Number}][\p{Letter}\p{Number}\s.'-]*$/iu, '')
     .trim();
+}
+
+function descriptiveName(name, text, make) {
+  const lines = String(text || '').split(/\r?\n/).map((line) => line.replace(/\s+/g, ' ').trim()).filter(Boolean);
+  const index = lines.findIndex((line) => line === name || line.startsWith(`${name} `));
+  const detail = index >= 0 ? lines[index + 1] : '';
+  const startsWithMake = !make || name.toLowerCase().startsWith(String(make).toLowerCase());
+  return startsWithMake && detail && detail.length <= 140 && !/(?:€|\bEUR\b|\bkm\b|\bmonth\b|\bphone\b)/i.test(detail)
+    ? `${name} ${detail}`.replace(/\s+/g, ' ').trim()
+    : name;
 }
 
 function modelFromName(value, make) {
@@ -59,11 +70,11 @@ export function parsePageSnapshot(snapshot) {
   const brand = typeof structured.brand === 'object' ? structured.brand.name : structured.brand;
   const titleName = listingNameFromTitle(title);
   const structuredName = String(structured.name || '').replace(/\s+/g, ' ').trim();
-  const name = titleName || structuredName;
-  const words = name.split(' ');
+  const initialName = titleName || structuredName;
+  const words = initialName.split(' ');
   const detectedMake = brand || words[0];
-  const detectedModel = modelFromName(titleName, detectedMake)
-    || modelFromName(structuredName, detectedMake)
+  const name = descriptiveName(initialName, snapshot.text, detectedMake);
+  const detectedModel = modelFromName(name, detectedMake)
     || words.slice(1).join(' ') || name;
   const co2Value = structured.emissions?.co2Emission || firstMatch(text, [
     /(?:CO2|CO₂|carbon dioxide)[\s\S]{0,80}?(\d{2,3})\s*g\s*\/?\s*km/i,

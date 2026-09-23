@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Vehicle Import Cost Estimator",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "Estimate vehicle import costs with local vehicle matching and Portugal tax rules.",
   "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": [

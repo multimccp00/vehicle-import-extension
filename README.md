@@ -2,7 +2,7 @@
 
 A Manifest V3 Chrome extension that estimates the landed cost of importing a used vehicle into Portugal. It reads a supported listing, looks up missing CO₂ data in the EEA vehicle catalogue, and estimates ISV, customs duty, import VAT, transport, and the total cost.
 
-Current extension version: `0.2.11`
+Current extension version: `0.2.12`
 
 ## What it does
 
@@ -30,7 +30,7 @@ Current extension version: `0.2.11`
 5. Select the project folder that contains `manifest.json`.
 6. Open a supported listing and click the extension icon.
 
-The popup should show `Extension build 0.2.11`. No command, background server, API key, or account is needed after installation.
+The popup should show `Extension build 0.2.12`. No command, background server, API key, or account is needed after installation.
 
 For a ready-to-load build, use the latest versioned folder under `output/` when one is included with the project.
 
