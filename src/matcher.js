@@ -17,7 +17,7 @@ export function isElectricVehicle(vehicle) {
 
 function makeMatches(a, b) {
   if (!a || !b) return true;
-  return a === b;
+  return a === b || a.includes(b) || b.includes(a);
 }
 
 function fuelMatches(a, b) {

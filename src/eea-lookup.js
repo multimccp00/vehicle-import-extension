@@ -20,12 +20,12 @@ export async function lookupEeaCatalogue(vehicle, fetchImpl = fetch, timeoutMs =
   if (modelToken) filters.push(`[Cn] LIKE '${sqlString(modelToken)}%'`);
   if (engine != null) filters.push(`[Ec (cm3)] BETWEEN ${Math.max(0, Math.round(engine - 100))} AND ${Math.round(engine + 100)}`);
   if (year != null) filters.push(`[Year] BETWEEN ${Math.max(2010, Math.round(year - 3))} AND ${Math.round(year + 3)}`);
-  filters.push('([Ewltp (g/km)] IS NOT NULL OR [Enedc (g/km)] IS NOT NULL)');
+  filters.push('([Ewltp (g/km)] IS NOT NULL OR [Enedc (g/km)] IS NOT NULL OR [E (g/km)] IS NOT NULL)');
 
   const query = [
     'SELECT TOP 100',
     '[Mk] AS Make, COALESCE([Cn], [MMS]) AS CommercialName, [Ec (cm3)] AS EngineCc, [Ft] AS FuelType,',
-    '[Ewltp (g/km)] AS Co2Wltp, [Enedc (g/km)] AS Co2Nedc, [Year] AS RegistrationYear,',
+    '[Ewltp (g/km)] AS Co2Wltp, [Enedc (g/km)] AS Co2Nedc, [E (g/km)] AS Co2Legacy, [Year] AS RegistrationYear,',
     '[TAN] AS TypeApprovalNumber, [T] AS Type, [Va] AS Variant, [Vf] AS Version',
     'FROM [CO2Emission].[latest].[co2cars]',
     `WHERE ${filters.join(' AND ')}`
@@ -61,7 +61,7 @@ export async function lookupEeaCatalogue(vehicle, fetchImpl = fetch, timeoutMs =
     engineCc: finiteNumber(row.EngineCc),
     fuelType: row.FuelType,
     co2Wltp: finiteNumber(row.Co2Wltp),
-    co2Nedc: finiteNumber(row.Co2Nedc),
+    co2Nedc: finiteNumber(row.Co2Nedc ?? row.Co2Legacy),
     registrationYear: finiteNumber(row.RegistrationYear),
     typeApprovalNumber: row.TypeApprovalNumber,
     type: row.Type,

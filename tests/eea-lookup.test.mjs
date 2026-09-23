@@ -37,3 +37,14 @@ test('times out a stalled EEA request', async () => {
     /EEA lookup timed out after 5 ms/
   );
 });
+
+
+test('maps the legacy EEA CO₂ field as NEDC for historical records', async () => {
+  let requestedUrl;
+  const records = await lookupEeaCatalogue({ make: 'Example Motors', model: 'Roadster', engineCc: 1984, firstRegistrationYear: 2016 }, async (url) => {
+    requestedUrl = url;
+    return { ok: true, async json() { return { results: [{ Make: 'Example Motors Group', CommercialName: 'Roadster', EngineCc: 1984, FuelType: 'Petrol', Co2Wltp: null, Co2Nedc: null, Co2Legacy: 159, RegistrationYear: 2016 }] }; } };
+  });
+  assert.ok(decodeURIComponent(requestedUrl).includes('[E (g/km)] AS Co2Legacy'));
+  assert.equal(records[0].co2Nedc, 159);
+});

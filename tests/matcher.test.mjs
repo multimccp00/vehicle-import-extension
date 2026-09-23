@@ -50,3 +50,11 @@ test('matches a catalogue commercial name when engine displacement is present', 
   assert.equal(result.co2Min, 162);
   assert.equal(result.co2Max, 162);
 });
+
+
+test('matches a composite catalogue make label without an alias table', () => {
+  const result = matchVehicle({ make: 'Example Motors', model: 'Roadster', engineCc: 1984, fuelType: 'Petrol', firstRegistrationYear: 2016 }, [
+    { make: 'Example Motors Group', commercialName: 'Roadster', engineCc: 1984, fuelType: 'Petrol', co2Nedc: 159, registrationYear: 2016 }
+  ]);
+  assert.equal(result.co2Min, 159);
+});
