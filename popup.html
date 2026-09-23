@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Import cost estimate</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">Vehicle import estimator</p>
+        <h1>Estimated landed cost</h1>
+        <p id="page-status" class="muted">Reading the current listing…</p>
+        <p id="build-version" class="muted"></p>
+      </header>
+
+      <section class="card">
+        <div class="row between">
+          <div>
+            <p class="label">Import destination</p>
+            <p id="destination-value" class="value">Detecting…</p>
+            <p id="destination-source" class="muted"></p>
+          </div>
+          <button id="change-destination" class="secondary">Change</button>
+        </div>
+        <div id="destination-editor" class="hidden editor">
+          <label for="destination-select">Country</label>
+          <select id="destination-select">
+            <option value="PT">Portugal</option>
+            <option value="DE">Germany</option>
+            <option value="ES">Spain</option>
+            <option value="FR">France</option>
+            <option value="NL">Netherlands</option>
+            <option value="BE">Belgium</option>
+            <option value="IT">Italy</option>
+            <option value="GB">United Kingdom</option>
+          </select>
+          <button id="save-destination">Save destination</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="row between">
+          <h2>Vehicle</h2>
+          <span id="match-badge" class="badge">Checking</span>
+        </div>
+        <dl id="vehicle-facts" class="facts"></dl>
+        <div id="match-warning" class="notice hidden"></div>
+      </section>
+
+      <section class="card">
+        <h2>Import inputs</h2>
+        <div class="grid">
+          <label>Origin country<select id="origin-country">
+            <option value="DE">Germany</option>
+            <option value="FR">France</option>
+            <option value="NL">Netherlands</option>
+            <option value="BE">Belgium</option>
+            <option value="ES">Spain</option>
+            <option value="IT">Italy</option>
+            <option value="JP">Japan</option>
+            <option value="US">United States</option>
+            <option value="GB">United Kingdom</option>
+          </select></label>
+          <label>Transport (€)<input id="transport-cost" type="number" min="0" value="1200" /></label>
+          <label>Other mandatory costs (€)<input id="other-costs" type="number" min="0" value="0" /></label>
+        </div>
+      </section>
+
+      <section class="card result-card">
+        <p class="label">Estimated total import cost</p>
+        <p id="total-value" class="total">—</p>
+        <div id="breakdown" class="breakdown"></div>
+      </section>
+
+      <footer>
+        <p>This is an estimate, not an official tax assessment.</p>
+        <p id="versions"></p>
+      </footer>
+    </main>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

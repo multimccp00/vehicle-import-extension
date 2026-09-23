@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Vehicle Import Cost Estimator",
+  "version": "0.2.11",
+  "description": "Estimate vehicle import costs with local vehicle matching and Portugal tax rules.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://www.autoscout24.com/*",
+    "https://www.autoscout24.de/*",
+    "https://www.autoscout24.pt/*",
+    "https://www.mobile.de/*",
+    "https://suchen.mobile.de/*",
+    "https://discodata.eea.europa.eu/*"
+  ],
+  "action": {
+    "default_title": "Estimate import cost",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.autoscout24.com/*",
+        "https://www.autoscout24.de/*",
+        "https://www.autoscout24.pt/*",
+        "https://www.mobile.de/*",
+        "https://suchen.mobile.de/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

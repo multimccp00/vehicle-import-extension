@@ -1,0 +1,5 @@
+{
+  "version": "0.2.11",
+  "source": "No bundled vehicle records; the EEA online catalogue is queried when listing CO2 is missing",
+  "records": []
+}
