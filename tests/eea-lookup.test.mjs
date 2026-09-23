@@ -48,3 +48,15 @@ test('maps the legacy EEA CO₂ field as NEDC for historical records', async () 
   assert.ok(decodeURIComponent(requestedUrl).includes('[E (g/km)] AS Co2Legacy'));
   assert.equal(records[0].co2Nedc, 159);
 });
+
+
+test('uses a two-word model prefix with a one-word fallback and listing fuel', async () => {
+  let requestedUrl;
+  await lookupEeaCatalogue({ make: 'Example Motors', model: 'Roadster R 2.0', engineCc: 1984, fuelType: 'Petrol', firstRegistrationYear: 2016 }, async (url) => {
+    requestedUrl = url;
+    return { ok: true, async json() { return { results: [] }; } };
+  });
+  const query = decodeURIComponent(requestedUrl);
+  assert.ok(query.includes("[Cn] LIKE 'Roadster R%' OR [Cn] LIKE 'Roadster%'"));
+  assert.ok(query.includes("[Ft] LIKE '%Petrol%'"));
+});

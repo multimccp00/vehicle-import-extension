@@ -13,11 +13,19 @@ export async function lookupEeaCatalogue(vehicle, fetchImpl = fetch, timeoutMs =
   const model = String(vehicle.model || '').trim();
   const engine = finiteNumber(vehicle.engineCc);
   const year = finiteNumber(vehicle.firstRegistrationYear);
+  const fuel = String(vehicle.fuelType || '').trim();
   if (!make || (!model && engine == null && year == null)) return [];
 
   const filters = [`[Mk] LIKE '%${sqlString(make)}%'`];
-  const modelToken = model.split(/\s+/).find((token) => token.replace(/[^\p{Letter}\p{Number}]/gu, '').length > 1);
-  if (modelToken) filters.push(`[Cn] LIKE '${sqlString(modelToken)}%'`);
+  const modelTokens = model.split(/\s+/).filter((token) => token.replace(/[^\p{Letter}\p{Number}]/gu, '').length > 0);
+  const modelToken = modelTokens[0];
+  const modelPrefix = modelTokens.slice(0, 2).join(' ');
+  if (modelPrefix && modelPrefix !== modelToken) {
+    filters.push(`([Cn] LIKE '${sqlString(modelPrefix)}%' OR [Cn] LIKE '${sqlString(modelToken)}%')`);
+  } else if (modelToken) {
+    filters.push(`[Cn] LIKE '${sqlString(modelToken)}%'`);
+  }
+  if (fuel) filters.push(`[Ft] LIKE '%${sqlString(fuel)}%'`);
   if (engine != null) filters.push(`[Ec (cm3)] BETWEEN ${Math.max(0, Math.round(engine - 100))} AND ${Math.round(engine + 100)}`);
   if (year != null) filters.push(`[Year] BETWEEN ${Math.max(2010, Math.round(year - 3))} AND ${Math.round(year + 3)}`);
   filters.push('([Ewltp (g/km)] IS NOT NULL OR [Enedc (g/km)] IS NOT NULL OR [E (g/km)] IS NOT NULL)');
